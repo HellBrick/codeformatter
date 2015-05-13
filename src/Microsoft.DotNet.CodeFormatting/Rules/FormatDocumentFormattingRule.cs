@@ -14,6 +14,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.VisualBasic;
+using Microsoft.CodeAnalysis.Options;
+using Microsoft.CodeAnalysis.MSBuild;
+using Microsoft.CodeAnalysis.CSharp.Formatting;
 
 namespace Microsoft.DotNet.CodeFormatting.Rules
 {
@@ -21,6 +24,19 @@ namespace Microsoft.DotNet.CodeFormatting.Rules
 	internal sealed class FormatDocumentFormattingRule : ILocalSemanticFormattingRule
 	{
 		private readonly Options _options;
+		private static readonly OptionSet _formattingOptions = MSBuildWorkspace.Create().Options
+			.WithChangedOption( FormattingOptions.UseTabs, LanguageNames.CSharp, true )
+			.WithChangedOption( CSharpFormattingOptions.SpaceWithinMethodDeclarationParenthesis, true )
+			.WithChangedOption( CSharpFormattingOptions.SpaceWithinMethodCallParentheses, true )
+			.WithChangedOption( CSharpFormattingOptions.SpaceAfterControlFlowStatementKeyword, true )
+			.WithChangedOption( CSharpFormattingOptions.SpaceWithinExpressionParentheses, true )
+			.WithChangedOption( CSharpFormattingOptions.SpaceAfterCast, true )
+			.WithChangedOption( CSharpFormattingOptions.SpaceWithinSquareBrackets, true )
+			.WithChangedOption( CSharpFormattingOptions.SpaceWithinOtherParentheses, true )
+			.WithChangedOption( CSharpFormattingOptions.SpaceAfterColonInBaseTypeDeclaration, true )
+			.WithChangedOption( CSharpFormattingOptions.SpaceAfterComma, true )
+			.WithChangedOption( CSharpFormattingOptions.SpaceAfterSemicolonsInForStatement, true )
+			.WithChangedOption( CSharpFormattingOptions.SpaceBeforeColonInBaseTypeDeclaration, true );
 
 		[ImportingConstructor]
 		internal FormatDocumentFormattingRule( Options options )
@@ -37,7 +53,7 @@ namespace Microsoft.DotNet.CodeFormatting.Rules
 
 		public async Task<SyntaxNode> ProcessAsync( Document document, SyntaxNode syntaxNode, CancellationToken cancellationToken )
 		{
-			document = await Formatter.FormatAsync( document, cancellationToken: cancellationToken );
+			document = await Formatter.FormatAsync( document, cancellationToken: cancellationToken, options: _formattingOptions );
 
 			if ( !_options.PreprocessorConfigurations.IsDefaultOrEmpty )
 			{
