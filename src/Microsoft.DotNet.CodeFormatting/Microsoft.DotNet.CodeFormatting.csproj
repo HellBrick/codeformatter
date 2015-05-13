@@ -85,6 +85,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Filters\IgnoreMigrationFilesFilter.cs" />
     <Compile Include="NameHelper.cs" />
     <Compile Include="ResponseFileWorkspace.cs" />
     <Compile Include="Rules\MarkReadonlyFieldsRule.cs" />
