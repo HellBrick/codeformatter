@@ -99,10 +99,9 @@ namespace Microsoft.DotNet.CodeFormatting.Rules
             MoveBackwardsPastWhitespace(list, ref index);
             if (index < 0 || !list[index].IsAnyEndOfLine())
             {
-                // There is no newline before the using at all.  Add a double newline to 
-                // get the blank we are looking for
-                newTriviaList = list.InsertRange(index + 1, new[] { newLineTrivia, newLineTrivia });
-                return true;
+                // There is no newline before the using at all => no need to do anything.
+                newTriviaList = SyntaxTriviaList.Empty;
+                return false;
             }
 
             var wasDirective = list[index].IsDirective;
