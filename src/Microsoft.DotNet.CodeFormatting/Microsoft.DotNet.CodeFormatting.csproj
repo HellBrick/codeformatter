@@ -118,7 +118,6 @@
     <Compile Include="Rules\PrivateFieldNamingRule.cs" />
     <Compile Include="Rules\UsingLocationRule.cs" />
     <Compile Include="Rules\FormatDocumentFormattingRule.cs" />
-    <Compile Include="Rules\NonAsciiCharactersAreEscapedInLiteralsRule.cs" />
     <Compile Include="Rules\ExplicitThisRule.cs" />
     <Compile Include="Rules\RuleOrder.cs" />
   </ItemGroup>
