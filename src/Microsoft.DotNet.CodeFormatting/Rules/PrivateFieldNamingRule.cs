@@ -93,19 +93,6 @@ namespace Microsoft.DotNet.CodeFormatting.Rules
                     name = char.ToLower(name[0]) + name.Substring(1);
                 }
 
-                if (fieldSymbol.IsStatic)
-                {
-                    // Check for ThreadStatic private fields.
-                    if (fieldSymbol.GetAttributes().Any(a => a.AttributeClass.Name.Equals("ThreadStaticAttribute", StringComparison.Ordinal)))
-                    {
-                        return "t_" + name;
-                    }
-                    else
-                    {
-                        return "s_" + name;
-                    }
-                }
-
                 return "_" + name;
             }
 
