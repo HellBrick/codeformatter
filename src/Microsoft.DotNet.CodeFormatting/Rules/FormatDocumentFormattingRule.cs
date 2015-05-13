@@ -17,62 +17,62 @@ using Microsoft.CodeAnalysis.VisualBasic;
 
 namespace Microsoft.DotNet.CodeFormatting.Rules
 {
-    [LocalSemanticRule(LocalSemanticRuleOrder.IsFormattedFormattingRule)]
-    internal sealed class FormatDocumentFormattingRule : ILocalSemanticFormattingRule
-    {
-        private readonly Options _options;
+	[LocalSemanticRule( LocalSemanticRuleOrder.IsFormattedFormattingRule )]
+	internal sealed class FormatDocumentFormattingRule : ILocalSemanticFormattingRule
+	{
+		private readonly Options _options;
 
-        [ImportingConstructor]
-        internal FormatDocumentFormattingRule(Options options)
-        {
-            _options = options;
-        }
+		[ImportingConstructor]
+		internal FormatDocumentFormattingRule( Options options )
+		{
+			_options = options;
+		}
 
-        public bool SupportsLanguage(string languageName)
-        {
-            return
-                languageName == LanguageNames.CSharp ||
-                languageName == LanguageNames.VisualBasic;
-        }
+		public bool SupportsLanguage( string languageName )
+		{
+			return
+				 languageName == LanguageNames.CSharp ||
+				 languageName == LanguageNames.VisualBasic;
+		}
 
-        public async Task<SyntaxNode> ProcessAsync(Document document, SyntaxNode syntaxNode, CancellationToken cancellationToken)
-        {
-            document = await Formatter.FormatAsync(document, cancellationToken: cancellationToken);
+		public async Task<SyntaxNode> ProcessAsync( Document document, SyntaxNode syntaxNode, CancellationToken cancellationToken )
+		{
+			document = await Formatter.FormatAsync( document, cancellationToken: cancellationToken );
 
-            if (!_options.PreprocessorConfigurations.IsDefaultOrEmpty)
-            {
-                var project = document.Project;
-                var parseOptions = document.Project.ParseOptions;
-                foreach (var configuration in _options.PreprocessorConfigurations)
-                {
-                    var list = new List<string>(configuration.Length + 1);
-                    list.AddRange(configuration);
-                    list.Add(FormattingEngineImplementation.TablePreprocessorSymbolName);
+			if ( !_options.PreprocessorConfigurations.IsDefaultOrEmpty )
+			{
+				var project = document.Project;
+				var parseOptions = document.Project.ParseOptions;
+				foreach ( var configuration in _options.PreprocessorConfigurations )
+				{
+					var list = new List<string>( configuration.Length + 1 );
+					list.AddRange( configuration );
+					list.Add( FormattingEngineImplementation.TablePreprocessorSymbolName );
 
-                    var newParseOptions = WithPreprocessorSymbols(parseOptions, list);
-                    document = project.WithParseOptions(newParseOptions).GetDocument(document.Id);
-                    document = await Formatter.FormatAsync(document, cancellationToken: cancellationToken);
-                }
-            }
+					var newParseOptions = WithPreprocessorSymbols( parseOptions, list );
+					document = project.WithParseOptions( newParseOptions ).GetDocument( document.Id );
+					document = await Formatter.FormatAsync( document, cancellationToken: cancellationToken );
+				}
+			}
 
-            return await document.GetSyntaxRootAsync(cancellationToken);
-        }
+			return await document.GetSyntaxRootAsync( cancellationToken );
+		}
 
-        private static ParseOptions WithPreprocessorSymbols(ParseOptions parseOptions, List<string> symbols)
-        {
-            var csharpParseOptions = parseOptions as CSharpParseOptions;
-            if (csharpParseOptions != null)
-            {
-                return csharpParseOptions.WithPreprocessorSymbols(symbols);
-            }
+		private static ParseOptions WithPreprocessorSymbols( ParseOptions parseOptions, List<string> symbols )
+		{
+			var csharpParseOptions = parseOptions as CSharpParseOptions;
+			if ( csharpParseOptions != null )
+			{
+				return csharpParseOptions.WithPreprocessorSymbols( symbols );
+			}
 
-            var basicParseOptions = parseOptions as VisualBasicParseOptions;
-            if (basicParseOptions != null)
-            {
-                return basicParseOptions.WithPreprocessorSymbols(symbols.Select(x => new KeyValuePair<string, object>(x, true)));
-            }
+			var basicParseOptions = parseOptions as VisualBasicParseOptions;
+			if ( basicParseOptions != null )
+			{
+				return basicParseOptions.WithPreprocessorSymbols( symbols.Select( x => new KeyValuePair<string, object>( x, true ) ) );
+			}
 
-            throw new NotSupportedException();
-        }
-    }
+			throw new NotSupportedException();
+		}
+	}
 }
