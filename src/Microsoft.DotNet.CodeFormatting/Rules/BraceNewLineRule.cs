@@ -113,24 +113,8 @@ namespace Microsoft.DotNet.CodeFormatting.Rules
             }
 
             var triviaList = token.LeadingTrivia;
-            if (triviaList.All(x => x.IsKind(SyntaxKind.WhitespaceTrivia) || x.IsKind(SyntaxKind.EndOfLineTrivia)))
-            {
-                // Simplest case.  It's all new lines and white space.  
-                if (EndsWithSimpleNewLine(token.GetPreviousToken().TrailingTrivia))
-                {
-                    triviaList = SyntaxTriviaList.Empty;
-                }
-                else
-                {
-                    // new line and we are done. 
-                    triviaList = SyntaxFactory.TriviaList(SyntaxUtil.GetBestNewLineTrivia(token));
-                }
-            }
-            else
-            {
-                triviaList = RemoveNewLinesFromTop(triviaList);
-                triviaList = RemoveNewLinesFromBottom(triviaList);
-            }
+            triviaList = RemoveNewLinesFromTop(triviaList);
+            triviaList = RemoveNewLinesFromBottom(triviaList);
 
             return token.WithLeadingTrivia(triviaList);
         }
